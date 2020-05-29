@@ -19,13 +19,15 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* User List*/
 .container {
     display: table;
     width: 100%;
     border-collapse: collapse;
+    margin: 10px 0;
 }
 
-.header{
+.list_header{
     text-decoration: underline;
 }
 
@@ -40,5 +42,56 @@ body {
     /*height: 128px;*/
     border: 1px solid #ccc;
     padding: 4px;
+}
 
+/* Pages */
+.pages {
+    background: white;
+    border-radius: 3px;
+    max-height: 40px;
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    margin: 0 auto;
+    padding: 4px;
+}
+
+.pages:after {
+    clear: both;
+    content: "";
+    display: table;
+}
+
+ul{
+    width: 100%;
+    margin: 0 auto;
+    padding: 5px;
+
+}
+
+li {
+    display: inline;
+    justify-content: center;
+    background: white;
+    border-radius: 3px;
+    padding: 3px 15px;
+    margin: 0px 5px;
+    border: #404040 solid 1px;
+    color: #404040;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+    transition: background .5s;
+
+}
+
+li.active,
+li:hover{
+    background: black;
+    color: white;
+}
+
+li.inactive {
+    display: none;
 }
