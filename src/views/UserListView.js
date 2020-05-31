@@ -63,7 +63,7 @@ export function renderUserProfile(userObj){
         const key = field[0];
         const type = field[1];
         selector = '.user_'+key;
-        let userInfoField = container_user_info.querySelector(selector);
+        let userInfoField = container_user_info.querySelector(`.user_${key}`);
         if(userInfoField){
             if(type === 'img'){
                 userInfoField.src = userData[key];
@@ -71,7 +71,7 @@ export function renderUserProfile(userObj){
                 userInfoField.value = userData[key];
             }
         }else{
-            console.log('Field '+key+' not found in HTML container_user_info');
+            console.log(`Field ${key} not found in HTML container_user_info`);
         }
     }
 }

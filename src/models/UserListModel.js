@@ -1,30 +1,29 @@
 import {renderPagination, renderUserList, renderUserProfile} from "../views/UserListView";
 
-const url ='https://reqres.in/api/users';
+const baseUrl ='https://reqres.in/api/users';
 let userListObj;
 let userObj;
 export async function getUserList(parametrs = '') {
-    let updatedUrl = url
+    let url = baseUrl;
     if (parametrs) {
-        //update url w/params
-        updatedUrl += parametrs;
+        url += parametrs;
     }
-
-    let response = await fetch(updatedUrl);
-    if (response.ok && response.status === 200){
-        userListObj = await response.json();
-        renderUserList(userListObj);
-        renderPagination(userListObj.page, userListObj.total_pages, !!(parametrs))
-    }
+    userListObj = await getData(url);
+    renderUserList(userListObj);
+    renderPagination(userListObj.page, userListObj.total_pages, !!(parametrs))
 }
 
 export async function getUser(userId){
     if(!userId) return;
-    const updatedUrl = url +'/'+userId;
-    let response = await fetch(updatedUrl);
-    if (response.ok && response.status === 200){
-        userObj = await response.json();
-        renderUserProfile(userObj);
-    }
+    const url = baseUrl +'/'+userId;
+    userObj = await getData(url);
+    renderUserProfile(userObj);
 }
 
+async function getData(url){
+    let response = await fetch(url);
+    if (response.ok && response.status === 200){
+        const userDataObj = await response.json();
+        return userDataObj;
+    }
+}
