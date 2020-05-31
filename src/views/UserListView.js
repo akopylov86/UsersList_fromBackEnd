@@ -1,12 +1,18 @@
-import {getUserList} from "../models/UserListModel";
+'use strict';
+import {getUser, getUserList} from "../models/UserListModel";
 
 const viewDataStructure = [
-    ['last_name', 'text'],
-    ['first_name', 'text'],
-    ['email', 'text'],
-    ['avatar', 'img'],
+    //name, field_type, visibility
+    ['last_name', 'text', true],
+    ['first_name', 'text', true],
+    ['email', 'text', true],
+    ['avatar', 'img', true],
+    ['id', 'text', false],
 ]
-const container = document.body.querySelector('.container');
+const container = document.body.querySelector('.container_table');
+const container_user_info = document.body.querySelector('.container_user_info');
+const pages = document.body.querySelectorAll('.pagination > li');
+
 
 export function renderUserList(userListObj) {
     const userList = userListObj.data;
@@ -17,6 +23,7 @@ export function renderUserList(userListObj) {
         let userContainer = document.createElement('div');
         userContainer.className = 'user_container';
         renderUser(userObj,userContainer);
+        userContainer.addEventListener('dblclick', showUserInfo)
         listHTMLView.push(userContainer);
     }
     container.append(...listHTMLView);
@@ -28,8 +35,12 @@ function renderUser(userObj, userContainer){
     for(let field of viewDataStructure){
         const key = field[0];
         const type = field[1];
+        const visibility = field[2];
         let userDiv = document.createElement('div');
         userDiv.className = 'user';
+        if(!visibility){
+            userDiv.className = 'inactive';
+        }
         userDiv.id = key;
         if(type ===  'img'){
             let userImg = document.createElement('img');
@@ -44,8 +55,29 @@ function renderUser(userObj, userContainer){
     userContainer.append(...userHTMLView);
 }
 
+export function renderUserProfile(userObj){
+    const userData = userObj.data;
+    let selector = ''
+    showUserInfoContainer(true);
+    for(let field of viewDataStructure){
+        const key = field[0];
+        const type = field[1];
+        selector = '.user_'+key;
+        let userInfoField = container_user_info.querySelector(selector);
+        if(userInfoField){
+            if(type === 'img'){
+                userInfoField.src = userData[key];
+            }else {
+                userInfoField.value = userData[key];
+            }
+        }else{
+            console.log('Field '+key+' not found in HTML container_user_info');
+        }
+    }
+}
+
 export function renderPagination(curr_page, total_pages, isUpdating = false){
-    const pages = document.body.querySelectorAll('.pagination > li');
+
     for(let i=0; i<pages.length; i++){
         let page = pages[i];
         page.classList.remove('active','inactive');
@@ -64,11 +96,33 @@ export function renderPagination(curr_page, total_pages, isUpdating = false){
 }
 
 function clearUserList(){
-    const usersList = document.body.querySelectorAll('.container > .user_container:not(.list_header)')
+    const usersList = document.body.querySelectorAll('.container_table > .user_container:not(.list_header)')
     for(let user of usersList){
         user.remove();
     }
 }
 function changePage(pageNumber){
+    showUserInfoContainer(false);
     getUserList('?page=' + pageNumber);
+}
+
+function showUserInfo(){
+    let idField = this.querySelector('#id');
+    if(idField){
+        //to change in propper way
+        let id = idField.innerHTML;
+        getUser(id);
+    }else {
+        console.log('Id field not found');
+    }
+}
+function showUserInfoContainer(show=false){
+    if(show){
+        container_user_info.classList.remove('inactive');
+        let closeButton = container_user_info.querySelector('.edit_buttons > .cancel');
+        closeButton.addEventListener('click', ()=>{showUserInfoContainer(false)})
+    }else {
+        container_user_info.classList.add('inactive');
+    }
+
 }

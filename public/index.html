@@ -8,29 +8,44 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div class="container">
-      <div class="user_container list_header">
-        <div class="user">Last name</div>
-        <div class="user">First name</div>
-        <div class="user">Email</div>
-        <div class="user">Avatar</div>
+  <div class="container">
+    <div class="container_table_pages">
+      <div class="container_table">
+        <div class="user_container list_header">
+          <div class="user">Last name</div>
+          <div class="user">First name</div>
+          <div class="user">Email</div>
+          <div class="user">Avatar</div>
+          <div class="inactive">Id</div>
+        </div>
+      </div>
+
+      <div class="pages">
+          <ul class="pagination">
+            <li class="active">1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>4</li>
+            <li>5</li>
+            <li>6</li>
+            <li class="inactive">7</li>
+          </ul>
       </div>
     </div>
+    <div class="container_user_info inactive">
+      <div><img class="user_avatar" src=""></div>
+      <div>First name: <input type="text" class="user_first_name" disabled /> </div>
+      <div>Second_name:  <input type="text" class="user_last_name" disabled /></div>
+      <div>Email: <input type="text" class="user_email" disabled /></div>
+      <div class="edit_buttons">
+<!--        TODO: Edit functionality-->
+<!--        <button class="edit_button inactive">Edit</button>-->
+<!--        <button class="edit_button submit inactive">Submit</button>-->
+        <button class="edit_button cancel">Close</button>
+      </div>
 
-    <div class="pages">
-<!--      <div class="pagination">-->
-        <ul class="pagination">
-          <li class="active">1</li>
-          <li>2</li>
-          <li>3</li>
-          <li>4</li>
-          <li>5</li>
-          <li>6</li>
-          <li class="inactive">7</li>
-        </ul>
-<!--      </div>-->
     </div>
-
+  </div>
     <script src="bundle.js"></script>
   </body>
 </html>

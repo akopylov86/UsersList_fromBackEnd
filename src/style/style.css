@@ -17,14 +17,28 @@ body {
     sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    height: 100vh;
+}
+
+.container {
+    display: flex;
+
+}
+
+.inactive {
+    display: none;
 }
 
 /* User List*/
-.container {
+.container_table_pages {
+    flex-grow: 1;
+}
+.container_table {
     display: table;
-    width: 100%;
+    /*width: 60%;*/
     border-collapse: collapse;
-    margin: 10px 0;
+    margin: 0 auto;
+    user-select: none;
 }
 
 .list_header{
@@ -41,7 +55,11 @@ body {
     vertical-align: middle;
     /*height: 128px;*/
     border: 1px solid #ccc;
-    padding: 4px;
+    padding: 1px;
+}
+
+.user_container img {
+    width: 50px;
 }
 
 /* Pages */
@@ -55,6 +73,7 @@ body {
     text-align: center;
     margin: 0 auto;
     padding: 4px;
+    margin-top: 10px;
 }
 
 .pages:after {
@@ -92,6 +111,29 @@ li:hover{
     color: white;
 }
 
-li.inactive {
-    display: none;
+/*User info*/
+.container_user_info {
+    flex-grow: 10;
+    background: linear-gradient(
+            115deg,
+            rgb(86, 228, 138) 10%,
+            rgb(173, 66, 224) 90%
+    );
+    text-align: center;
+}
+
+.edit_button {
+    font-weight: 700;
+    color: white;
+    text-decoration: none;
+    padding: .8em 1em calc(.8em + 1px);
+    border-radius: 5px;
+    background: rgb(64,199,129);
+    transition: 0.2s;
+}
+.edit_button:hover {
+    background: rgb(53, 167, 110);
+}
+.edit_button:active {
+    background: rgb(33,147,90);
 }
