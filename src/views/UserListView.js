@@ -8,7 +8,7 @@ const viewDataStructure = [
     ['first_name', 'text', true],
     ['email', 'text', true],
     ['avatar', 'img', true],
-    ['id', 'text', false],
+    ['id', 'parent_id', false],
 ]
 const container = document.body.querySelector('.container_table');
 const container_user_info = document.body.querySelector('.container_user_info');
@@ -40,7 +40,7 @@ function renderUser(userObj, userContainer){
         let userDiv = document.createElement('div');
         userDiv.className = 'user';
         if(!visibility){
-            userDiv.className = 'inactive';
+            userDiv.className += ' inactive';
         }
         userDiv.id = key;
         if(type ===  'img'){
@@ -48,6 +48,9 @@ function renderUser(userObj, userContainer){
             userImg.src = userObj[key];
             userImg.alt = '';
             userDiv.append(...[userImg]);
+        }else if(type === 'parent_id'){
+            userContainer.id = userObj[key];
+            continue;
         }else {
             userDiv.innerHTML = userObj[key];
         }
@@ -62,6 +65,9 @@ export function renderUserProfile(userObj){
     for(let field of viewDataStructure){
         const key = field[0];
         const type = field[1];
+        if(type === 'parent_id'){
+            continue;
+        }
         let userInfoField = container_user_info.querySelector(`.user_${key}`);
         if(userInfoField){
             if(type === 'img'){
@@ -106,21 +112,21 @@ function changePage(pageNumber){
 }
 
 function showUserInfo(){
-    let idField = this.querySelector('#id');
-    if(idField){
-        //to change in propper way
-        let id = idField.innerHTML;
-        showUser(id);
+    let userId = this.id;
+    if(userId){
+        showUser(userId);
     }else {
         console.log('Id field not found');
     }
 }
+
 function showUserInfoContainer(show=false){
+    let closeButton = container_user_info.querySelector('.edit_buttons > .cancel');
     if(show){
         container_user_info.classList.remove('inactive');
-        let closeButton = container_user_info.querySelector('.edit_buttons > .cancel');
         closeButton.addEventListener('click', ()=>{showUserInfoContainer(false)})
     }else {
         container_user_info.classList.add('inactive');
+        closeButton.removeEventListener('click',()=>{});
     }
 }
