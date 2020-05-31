@@ -1,5 +1,6 @@
 'use strict';
-import {getUser, getUserList} from "../models/UserListModel";
+
+import {showUser, showUserList} from "../controllers/UserListController";
 
 const viewDataStructure = [
     //name, field_type, visibility
@@ -57,12 +58,10 @@ function renderUser(userObj, userContainer){
 
 export function renderUserProfile(userObj){
     const userData = userObj.data;
-    let selector = ''
     showUserInfoContainer(true);
     for(let field of viewDataStructure){
         const key = field[0];
         const type = field[1];
-        selector = '.user_'+key;
         let userInfoField = container_user_info.querySelector(`.user_${key}`);
         if(userInfoField){
             if(type === 'img'){
@@ -103,7 +102,7 @@ function clearUserList(){
 }
 function changePage(pageNumber){
     showUserInfoContainer(false);
-    getUserList('?page=' + pageNumber);
+    showUserList('?page=' + pageNumber);
 }
 
 function showUserInfo(){
@@ -111,7 +110,7 @@ function showUserInfo(){
     if(idField){
         //to change in propper way
         let id = idField.innerHTML;
-        getUser(id);
+        showUser(id);
     }else {
         console.log('Id field not found');
     }
@@ -124,5 +123,4 @@ function showUserInfoContainer(show=false){
     }else {
         container_user_info.classList.add('inactive');
     }
-
 }

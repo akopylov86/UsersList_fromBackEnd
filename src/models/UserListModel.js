@@ -1,5 +1,3 @@
-import {renderPagination, renderUserList, renderUserProfile} from "../views/UserListView";
-
 const baseUrl ='https://reqres.in/api/users';
 let userListObj;
 let userObj;
@@ -9,15 +7,14 @@ export async function getUserList(parametrs = '') {
         url += parametrs;
     }
     userListObj = await getData(url);
-    renderUserList(userListObj);
-    renderPagination(userListObj.page, userListObj.total_pages, !!(parametrs))
+    return userListObj
 }
 
-export async function getUser(userId){
+export async function getUserData(userId){
     if(!userId) return;
     const url = baseUrl +'/'+userId;
     userObj = await getData(url);
-    renderUserProfile(userObj);
+    return userObj;
 }
 
 async function getData(url){

@@ -1,4 +1,3 @@
-import {getUserList} from "./models/UserListModel";
+import {showUserList} from "./controllers/UserListController";
 
-getUserList();
-
+showUserList();
