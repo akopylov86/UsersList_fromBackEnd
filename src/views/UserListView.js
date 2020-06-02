@@ -1,19 +1,20 @@
 'use strict';
 
 import {showUser, showUserList} from "../controllers/UserListController";
+import {getDataStructure} from "../models/UserListModel";
 
-const viewDataStructure = [
-    //name, field_type, visibility
-    ['last_name', 'text', true],
-    ['first_name', 'text', true],
-    ['email', 'text', true],
-    ['avatar', 'img', true],
-    ['id', 'parent_id', false],
-]
+
 const container = document.body.querySelector('.container_table');
 const container_user_info = document.body.querySelector('.container_user_info');
 const pages = document.body.querySelectorAll('.pagination > li');
+const userInfoFields = container_user_info.querySelectorAll('input');
+const closeButton = container_user_info.querySelector('.edit_buttons > .close');
+const cancelButton = container_user_info.querySelector('.edit_buttons > .cancel');
+const saveButton = container_user_info.querySelector('.edit_buttons > .save');
+const editButton = container_user_info.querySelector('.edit_buttons > .edit');
 
+const viewDataStructure = getDataStructure();
+let currUser;
 
 export function renderUserList(userListObj) {
     const userList = userListObj.data;
@@ -28,6 +29,7 @@ export function renderUserList(userListObj) {
         listHTMLView.push(userContainer);
     }
     container.append(...listHTMLView);
+
 }
 
 function renderUser(userObj, userContainer){
@@ -38,9 +40,9 @@ function renderUser(userObj, userContainer){
         const type = field[1];
         const visibility = field[2];
         let userDiv = document.createElement('div');
-        userDiv.className = 'user';
+        userDiv.classList.add('user');
         if(!visibility){
-            userDiv.className += ' inactive';
+            setVisibilityOnForm(false,userDiv);
         }
         userDiv.id = key;
         if(type ===  'img'){
@@ -59,9 +61,9 @@ function renderUser(userObj, userContainer){
     userContainer.append(...userHTMLView);
 }
 
-export function renderUserProfile(userObj){
-    const userData = userObj.data;
-    showUserInfoContainer(true);
+export function renderUserProfile(userData){
+    currUser = userData;
+    showDefaultUserInfoContainer(true);
     for(let field of viewDataStructure){
         const key = field[0];
         const type = field[1];
@@ -70,6 +72,7 @@ export function renderUserProfile(userObj){
         }
         let userInfoField = container_user_info.querySelector(`.user_${key}`);
         if(userInfoField){
+            userInfoField.id = key;
             if(type === 'img'){
                 userInfoField.src = userData[key];
             }else {
@@ -85,6 +88,7 @@ export function renderPagination(curr_page, total_pages, isUpdating = false){
 
     for(let i=0; i<pages.length; i++){
         let page = pages[i];
+        //TODO: refactor to setVisibilityOnForm(true, field)
         page.classList.remove('active','inactive');
         if(i >= total_pages){
             page.classList.add('inactive');
@@ -107,8 +111,8 @@ function clearUserList(){
     }
 }
 function changePage(pageNumber){
-    showUserInfoContainer(false);
-    showUserList('?page=' + pageNumber);
+    showDefaultUserInfoContainer(false);
+    showUserList(pageNumber);
 }
 
 function showUserInfo(){
@@ -120,13 +124,80 @@ function showUserInfo(){
     }
 }
 
-function showUserInfoContainer(show=false){
-    let closeButton = container_user_info.querySelector('.edit_buttons > .cancel');
+function showDefaultUserInfoContainer(show=false){
+    allowEditUserInfo(false);
     if(show){
-        container_user_info.classList.remove('inactive');
-        closeButton.addEventListener('click', ()=>{showUserInfoContainer(false)})
+        setVisibilityOnForm(true,container_user_info, closeButton, editButton);
+        closeButton.addEventListener('click', ()=>{showDefaultUserInfoContainer(false)})
+        editButton.addEventListener('click', ()=>{allowEditUserInfo(true)});
+        setVisibilityOnForm(false,cancelButton, saveButton);
     }else {
-        container_user_info.classList.add('inactive');
+        setVisibilityOnForm(false,container_user_info);
         closeButton.removeEventListener('click',()=>{});
+        editButton.removeEventListener('click', ()=>{});
+        cancelButton.removeEventListener('click', ()=>{});
+        saveButton.removeEventListener('click', ()=>{});
+    }
+}
+
+function allowEditUserInfo(allowEdit=true){
+    userInfoFields.forEach((item)=>{
+        if (allowEdit) {
+            item.removeAttribute("disabled")
+            item.addEventListener('input', () => {userDataOnChange(item)})
+        }else {
+            item.setAttribute("disabled", true);
+            item.removeEventListener('input', ()=>{});
+        }
+    });
+
+    if (allowEdit) {
+        saveButton.addEventListener('click', () => {
+            saveUserData()
+        })
+        cancelButton.addEventListener('click', () => {
+            stopEditingUserData();
+        })
+        setVisibilityOnForm(true, cancelButton, saveButton);
+        setVisibilityOnForm(false, closeButton, editButton);
+    }
+}
+
+function userDataOnChange(element){
+    currUser.wasChanged = true;
+    let key = element.id;
+
+    if(currUser[key] == element.value){
+        element.classList.remove('edited');
+        delete currUser['changed_'+key];
+    }else{
+        element.classList.add('edited');
+        currUser['changed_'+key] = element.value;
+    }
+}
+
+function stopEditingUserData(){
+    setVisibilityOnForm(true, closeButton, saveButton);
+    updateCurrentUser();
+}
+
+async function saveUserData(){
+    if(currUser.updateUser()){
+        stopEditingUserData();
+    }
+}
+
+async function updateCurrentUser(){
+    await currUser.refreshData();
+    renderUserProfile(currUser);
+}
+
+function setVisibilityOnForm(visibility, ...elements){
+    for(let element of elements) {
+        if (visibility) {
+            element.classList.remove('inactive');
+        } else {
+            element.classList.add('inactive');
+        }
     }
 }

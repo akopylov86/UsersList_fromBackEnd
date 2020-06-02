@@ -1,13 +1,15 @@
-import {getUserData, getUserList} from "../models/UserListModel";
+import {getUserData, getUserList, User} from "../models/UserListModel";
 import {renderPagination, renderUserList, renderUserProfile} from "../views/UserListView";
 
-export async function showUserList(parametrs = ''){
-    const userListObj = await getUserList(parametrs);
+export async function showUserList(page = ''){
+    const userListObj = await getUserList(page);
     renderUserList(userListObj);
-    renderPagination(userListObj.page, userListObj.total_pages, !!(parametrs));
+    renderPagination(userListObj.page, userListObj.total_pages, !!(page));
 }
 
 export async function showUser(id){
-    const userObj = await getUserData(id);
-    renderUserProfile(userObj);
+    // const userObj = await getUserData(id);
+    const user = new User(id);
+    await user.refreshData();
+    renderUserProfile(user);
 }
